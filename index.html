@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evidências BD — Matrícula 17102009</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; max-width: 850px; margin: 0 auto; padding: 25px; background: #f8fafc; color: #1e293b; }
+        header { background: #1e3a8a; color: white; padding: 30px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        header h1 { margin: 0; font-size: 26px; }
+        .meta { margin-top: 10px; font-size: 15px; opacity: 0.9; }
+        section { background: white; padding: 25px; border-radius: 8px; margin-bottom: 25px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        h2 { color: #2563eb; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; margin-top: 0; }
+        pre { background: #f1f5f9; padding: 15px; border-radius: 6px; overflow-x: auto; font-size: 14px; font-family: monospace; color: #0f172a; }
+        .img-box { margin-top: 15px; text-align: center; background: #f8fafc; padding: 10px; border: 1px dashed #cbd5e1; border-radius: 6px; }
+        img { max-width: 100%; height: auto; border: 1px solid #e2e8f0; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Evidências de Banco de Dados — MediCore</h1>
+    <div class="meta">
+        <strong>Aluno:</strong> [Seu Nome Completo Aqui]<br>
+        <strong>Matrícula:</strong> 17102009<br>
+        <strong>Ambiente:</strong> MySQL Local via Workbench
+    </div>
+</header>
+
+<section>
+    <h2>1. Schema e Modelagem do Banco (`lab_17102009`)</h2>
+    <p>Criação do schema e das 4 tabelas obrigatórias (pacientes, consultas, prontuarios, auditoria) com integridade referencial.</p>
+    <div class="img-box">
+        <img src="assets/schema-workbench.png" alt="Schema no Workbench">
+    </div>
+</section>
+
+<section>
+    <h2>2. Objeto do Grupo A (Stored Procedure)</h2>
+    <p>Validação da regra de negócio com uso de cursor e disparo de exceção controlada via <code>SIGNAL SQLSTATE '45000'</code> ao tentar consultar IDs inválidos.</p>
+    <div class="img-box">
+        <img src="assets/call-procedure.png" alt="Erro Customizado da Procedure">
+    </div>
+</section>
+
+<section>
+    <h2>3. Otimização com Índice Composto (Grupo B)</h2>
+    <p>Análise de desempenho da busca filtrando por <code>paciente_id</code> e por faixa de <code>data_consulta</code>.</p>
+    
+    <h3>Plano de Execução ANTES do Índice Composto:</h3>
+    <p>O otimizador usou a FK padrão ou realizou uma verificação genérica.</p>
+    <div class="img-box">
+        <img src="assets/explain-antes.png" alt="Explain antes da otimização">
+    </div>
+
+    <h3>Plano de Execução DEPOIS do Índice Composto:</h3>
+    <p>O MySQL passou a realizar a busca diretamente pela chave otimizada combinada.</p>
+    <div class="img-box">
+        <img src="assets/explain-depois.png" alt="Explain depois da otimização">
+    </div>
+
+    <h3>Reflexão Curta:</h3>
+    <p>A otimização foi executada com êxito total. No segundo comando <code>EXPLAIN</code>, a coluna <code>key</code> passou a apontar diretamente para a nossa chave composta criada (<code>idx_consultas_paciente_data</code>). Isso reduz o desperdício de varredura no disco e deixa a aplicação pronta para escalar com milhões de registros clínico-hospitalares.</p>
+</section>
+
+</body>
+</html>
